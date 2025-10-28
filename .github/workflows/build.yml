@@ -77,11 +77,22 @@ jobs:
       - name: './build-release.sh'
         run: |
           # "-" means "Sign to run locally". There is no aerospace-codesign-certificate on GH Actions
+          echo "Starting build-release.sh..."
+          set -e  # Exit on any error
           ./build-release.sh --codesign-identity -
+          echo "build-release.sh completed successfully"
+          echo "Starting install-from-sources.sh..."
           ./install-from-sources.sh --dont-rebuild
+          echo "install-from-sources.sh completed successfully"
       - name: cat ./.release/xcodebuild.log
         if: ${{ always() }}
         run: 'if test -f ./.release/xcodebuild.log; then cat ./.release/xcodebuild.log; fi'
+      - name: List release directory contents
+        run: |
+          echo "Listing ./.release directory:"
+          ls -la ./.release/ || echo "No ./.release directory"
+          echo "Looking for files:"
+          find . -name "*.dmg" -o -name "*.zip" -o -name "AeroSpace.app" 2>/dev/null || echo "No files found"
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v4
         with:
