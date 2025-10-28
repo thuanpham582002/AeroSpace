@@ -8,21 +8,21 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch: # Allow manual trigger
-  inputs:
-    build_type:
-      description: 'Type of build to run'
-      required: false
-      default: 'all'
-      type: choice
-      options:
-      - all
-      - debug-only
-      - release-only
-    reason:
-      description: 'Reason for manual build'
-      required: false
-      default: 'Manual testing'
-      type: string
+    inputs:
+      build_type:
+        description: 'Type of build to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - debug-only
+        - release-only
+      reason:
+        description: 'Reason for manual build'
+        required: false
+        default: 'Manual testing'
+        type: string
 
 jobs:
 
