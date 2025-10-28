@@ -7,12 +7,27 @@ on:
       - 'rr/**' # "rr" stands for "remote run"
   pull_request:
     branches: [ "main" ]
-  schedule:
-    - cron: '0 0 * * *' # every day at 00:00
+  workflow_dispatch: # Allow manual trigger
+  inputs:
+    build_type:
+      description: 'Type of build to run'
+      required: false
+      default: 'all'
+      type: choice
+      options:
+      - all
+      - debug-only
+      - release-only
+    reason:
+      description: 'Reason for manual build'
+      required: false
+      default: 'Manual testing'
+      type: string
 
 jobs:
 
   build-debug:
+    if: github.event.inputs.build_type == 'all' || github.event.inputs.build_type == 'debug-only' || github.event.inputs.build_type == ''
     strategy:
       # fail-fast: false # Disable fail-fast in matrix
       matrix:
@@ -40,6 +55,7 @@ jobs:
   # 1. It cuts the build time twice on GH Actions
   # 2. The latest Xcode version is not available on old macOS, and old Xcode versions bundle too old Swift version
   build-release:
+    if: github.event.inputs.build_type == 'all' || github.event.inputs.build_type == 'release-only' || github.event.inputs.build_type == ''
     strategy:
       # fail-fast: false # Disable fail-fast in matrix
       matrix:
