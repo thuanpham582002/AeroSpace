@@ -7,7 +7,6 @@ let signposter = OSSignposter(subsystem: aeroSpaceAppId, category: .pointsOfInte
 
 let myPid = NSRunningApplication.current.processIdentifier
 let lockScreenAppBundleId = "com.apple.loginwindow"
-let clipBookAppBundleId = "com.ikryanov.clipbook"
 let AEROSPACE_WINDOW_ID = "AEROSPACE_WINDOW_ID" // env var
 let AEROSPACE_WORKSPACE = "AEROSPACE_WORKSPACE" // env var
 

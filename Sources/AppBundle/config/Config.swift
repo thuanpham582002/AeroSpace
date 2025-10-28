@@ -56,6 +56,8 @@ struct Config: ConvenienceCopyable {
     var modes: [String: Mode] = [:]
     var onWindowDetected: [WindowDetectedCallback] = []
 
+    var excludedApps: [String] = []
+
     var preservedWorkspaceNames: [String] = []
 }
 
