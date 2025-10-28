@@ -42,6 +42,8 @@ final class MacApp: AbstractApp {
         // Don't perceive any of the lock screen windows as real windows
         // Otherwise, false positive ax notifications might trigger that lead to gcWindows
         if nsApp.bundleIdentifier == lockScreenAppBundleId { return nil }
+        // Exclude ClipBook from AeroSpace management
+        if nsApp.bundleIdentifier == clipBookAppBundleId { return nil }
         let pid = nsApp.processIdentifier
         // AX requests crash if you send them to yourself
         if pid == myPid { return nil }
