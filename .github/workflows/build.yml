@@ -50,6 +50,12 @@ jobs:
       - run: swiftly init --skip-install --assume-yes --verbose && swiftly install
       - run: ./build-debug.sh
       - run: ./run-tests.sh
+      - name: Upload Debug Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: a-debug-${{ matrix.os }}
+          path: ./.build/arm64-apple-macosx/debug/
+          retention-days: 1
 
   # We build release artifacts only on the latest macOS versions because:
   # 1. It cuts the build time twice on GH Actions
@@ -76,3 +82,11 @@ jobs:
       - name: cat ./.release/xcodebuild.log
         if: ${{ always() }}
         run: 'if test -f ./.release/xcodebuild.log; then cat ./.release/xcodebuild.log; fi'
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: a-release-${{ matrix.os }}
+          path: |
+            ./.release/
+            ./install-from-sources.sh
+          retention-days: 1
