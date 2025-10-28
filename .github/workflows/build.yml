@@ -87,6 +87,8 @@ jobs:
         with:
           name: a-release-${{ matrix.os }}
           path: |
-            ./.release/
+            ./.release/*.zip
+            ./.release/AeroSpace.app
+            ./.release/aerospace
             ./install-from-sources.sh
           retention-days: 1
