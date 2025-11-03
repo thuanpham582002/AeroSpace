@@ -8,21 +8,21 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch: # Allow manual trigger
-    inputs:
-      build_type:
-        description: 'Type of build to run'
-        required: false
-        default: 'all'
-        type: choice
-        options:
-        - all
-        - debug-only
-        - release-only
-      reason:
-        description: 'Reason for manual build'
-        required: false
-        default: 'Manual testing'
-        type: string
+  inputs:
+    build_type:
+      description: 'Type of build to run'
+      required: false
+      default: 'all'
+      type: choice
+      options:
+      - all
+      - debug-only
+      - release-only
+    reason:
+      description: 'Reason for manual build'
+      required: false
+      default: 'Manual testing'
+      type: string
 
 jobs:
 
@@ -44,18 +44,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - run: env # Debug
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - run: ./.github/gh-actions-runner-xcode-select.sh
       - run: brew install swiftly
       - run: swiftly init --skip-install --assume-yes --verbose && swiftly install
       - run: ./build-debug.sh
       - run: ./run-tests.sh
-      - name: Upload Debug Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: a-debug-${{ matrix.os }}
-          path: ./.build/arm64-apple-macosx/debug/
-          retention-days: 1
 
   # We build release artifacts only on the latest macOS versions because:
   # 1. It cuts the build time twice on GH Actions
@@ -70,37 +64,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - run: env # Debug
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - run: ./.github/gh-actions-runner-xcode-select.sh
       - run: brew install bash fish xcbeautify swiftly
       - run: swiftly init --skip-install --assume-yes --verbose && swiftly install
       - name: './build-release.sh'
         run: |
           # "-" means "Sign to run locally". There is no aerospace-codesign-certificate on GH Actions
-          echo "Starting build-release.sh..."
-          set -e  # Exit on any error
           ./build-release.sh --codesign-identity -
-          echo "build-release.sh completed successfully"
-          echo "Starting install-from-sources.sh..."
           ./install-from-sources.sh --dont-rebuild
-          echo "install-from-sources.sh completed successfully"
       - name: cat ./.release/xcodebuild.log
         if: ${{ always() }}
         run: 'if test -f ./.release/xcodebuild.log; then cat ./.release/xcodebuild.log; fi'
-      - name: List release directory contents
-        run: |
-          echo "Listing ./.release directory:"
-          ls -la ./.release/ || echo "No ./.release directory"
-          echo "Looking for files:"
-          find . -name "*.dmg" -o -name "*.zip" -o -name "AeroSpace.app" 2>/dev/null || echo "No files found"
-      - name: Upload Release Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: a-release-${{ matrix.os }}
-          path: |
-            ./.release/*.zip
-            ./.release/*.dmg
-            ./.release/AeroSpace.app
-            ./.release/aerospace
-            ./install-from-sources.sh
-          retention-days: 1

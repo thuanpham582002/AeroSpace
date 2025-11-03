@@ -116,13 +116,6 @@ cd .release
     mkdir -p "AeroSpace-v$build_version/bin" && cp -r aerospace "AeroSpace-v$build_version/bin"
     cp -r AeroSpace.app "AeroSpace-v$build_version"
     zip -r "AeroSpace-v$build_version.zip" "AeroSpace-v$build_version"
-
-    ################
-    ### CREATE DMG ###
-    ################
-
-    # Create DMG using hdiutil
-    hdiutil create -volname "AeroSpace" -srcfolder "AeroSpace-v$build_version" -ov -format UDZO "AeroSpace-v$build_version.dmg"
 cd -
 
 #################
